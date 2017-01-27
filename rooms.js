@@ -90,6 +90,9 @@ class Room {
 	addRaw(message) {
 		return this.add('|raw|' + message);
 	}
+	addLogMessage(user, text) {
+		return this.add('|c|' + user.getIdentity(this) + '|/log ' + text).update();
+	}
 	getLogSlice(amount) {
 		let log = this.log.slice(amount);
 		log.unshift('|:|' + (~~(Date.now() / 1000)));
@@ -199,6 +202,9 @@ class Room {
 		this.runMuteTimer();
 
 		user.updateIdentity(this.id);
+
+		if (!(this.isPrivate === true || this.isPersonal || this.battle)) Punishments.monitorRoomPunishments(user);
+
 		return userid;
 	}
 	unmute(userid, notifyText) {
@@ -397,17 +403,18 @@ class GlobalRoom {
 			return this.formatList;
 		}
 		this.formatList = '|formats' + (Ladders.formatsListPrefix || '');
-		let curSection = '';
+		let section = '', prevSection = '';
+		let curColumn = 1;
 		for (let i in Tools.data.Formats) {
 			let format = Tools.data.Formats[i];
+			if (format.section) section = format.section;
+			if (format.column) curColumn = format.column;
+			if (!format.name) continue;
 			if (!format.challengeShow && !format.searchShow && !format.tournamentShow) continue;
 
-			let section = format.section;
-			if (section === undefined) section = format.mod;
-			if (!section) section = '';
-			if (section !== curSection) {
-				curSection = section;
-				this.formatList += '|,' + (format.column || 1) + '|' + section;
+			if (section !== prevSection) {
+				prevSection = section;
+				this.formatList += '|,' + curColumn + '|' + section;
 			}
 			this.formatList += '|' + format.name;
 			let displayCode = 0;
@@ -423,12 +430,14 @@ class GlobalRoom {
 	getRoomList(filter) {
 		let rooms = [];
 		let skipCount = 0;
-		if (this.battleCount > 150 && !filter) {
+		let [formatFilter, eloFilter] = filter.split(',');
+		if (this.battleCount > 150 && !formatFilter && !eloFilter) {
 			skipCount = this.battleCount - 150;
 		}
 		Rooms.rooms.forEach(room => {
 			if (!room || !room.active || room.isPrivate) return;
-			if (filter && filter !== room.format && filter !== true) return;
+			if (formatFilter && formatFilter !== room.format) return;
+			if (eloFilter && (!room.rated || room.rated < eloFilter)) return;
 			if (skipCount && skipCount--) return;
 
 			rooms.push(room);
@@ -526,7 +535,7 @@ class GlobalRoom {
 
 		// search must be within range
 		let searchRange = 100, elapsed = Date.now() - Math.min(search1.time, search2.time);
-		if (formatid === 'ou' || formatid === 'oucurrent' || formatid === 'randombattle') searchRange = 50;
+		if (formatid === 'ou' || formatid === 'oucurrent' || formatid === 'oususpecttest' || formatid === 'randombattle') searchRange = 50;
 		searchRange += elapsed / 300; // +1 every .3 seconds
 		if (searchRange > 300) searchRange = 300 + (searchRange - 300) / 10; // +1 every 3 sec after 300
 		if (searchRange > 600) searchRange = 600;
@@ -617,7 +626,7 @@ class GlobalRoom {
 	}
 	addChatRoom(title) {
 		let id = toId(title);
-		if (id === 'battles' || id === 'rooms' || id === 'ladder' || id === 'teambuilder') return false;
+		if (id === 'battles' || id === 'rooms' || id === 'ladder' || id === 'teambuilder' || id === 'home') return false;
 		if (Rooms.rooms.has(id)) return false;
 
 		let chatRoomData = {
@@ -794,7 +803,7 @@ class GlobalRoom {
 		this.modlogStream.write('[' + (new Date().toJSON()) + '] ' + text + '\n');
 	}
 	startLockdown(err, slow) {
-		if (this.lockdown) return;
+		if (this.lockdown && err) return;
 		let devRoom = Rooms('development');
 		const stack = (err ? Chat.escapeHTML(err.stack).split(`\n`).slice(0, 2).join(`<br />`) : ``);
 		Rooms.rooms.forEach((curRoom, id) => {
@@ -890,7 +899,7 @@ class BattleRoom extends Room {
 		this.p2 = p2 || null;
 
 		this.rated = rated;
-		this.battle = Simulator.create(this.id, format, rated, this);
+		this.battle = new Rooms.RoomBattle(this, format, rated);
 		this.game = this.battle;
 
 		this.sideTicksLeft = [21, 21];
@@ -1039,7 +1048,7 @@ class BattleRoom extends Room {
 			fs.mkdir(curpath, '0755', () => {
 				curpath += '/' + logsubfolder;
 				fs.mkdir(curpath, '0755', () => {
-					fs.writeFile(curpath + '/' + this.id + '.log.json', JSON.stringify(logData));
+					fs.writeFile(curpath + '/' + this.id + '.log.json', JSON.stringify(logData), () => {});
 				});
 			});
 		}); // asychronicity
@@ -1364,7 +1373,7 @@ class ChatRoom extends Room {
 
 		this.type = 'chat';
 
-		if (Config.logchat) {
+		if (Config.logchat && !roomid.includes("spam")) {
 			this.rollLogFile(true);
 			this.logEntry = function (entry, date) {
 				const timestamp = Chat.toTimestamp(new Date()).split(' ')[1] + ' ';
@@ -1544,6 +1553,11 @@ class ChatRoom extends Room {
 				'Must be rank ' + this.modchat + ' or higher to talk right now.' +
 				'</div>';
 		}
+		if (this.slowchat && user.can('mute', null, this)) {
+			message += (message ? '<br />' : '\n|raw|<div class="infobox">') + '<div class="broadcast-red">' +
+				'Messages must have at least ' + this.slowchat + ' seconds between them.' +
+				'</div>';
+		}
 		if (message) message += '</div>';
 		return message;
 	}
@@ -1694,6 +1708,11 @@ Rooms.ChatRoom = ChatRoom;
 
 Rooms.RoomGame = require('./room-game').RoomGame;
 Rooms.RoomGamePlayer = require('./room-game').RoomGamePlayer;
+
+Rooms.RoomBattle = require('./room-battle').RoomBattle;
+Rooms.RoomBattlePlayer = require('./room-battle').RoomBattlePlayer;
+Rooms.SimulatorManager = require('./room-battle').SimulatorManager;
+Rooms.SimulatorProcess = require('./room-battle').SimulatorProcess;
 
 // initialize
 

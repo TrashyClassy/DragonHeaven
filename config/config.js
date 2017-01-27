@@ -146,7 +146,7 @@ exports.consoleips = ['127.0.0.1'];
 exports.watchconfig = true;
 
 // logchat - whether to log chat rooms.
-exports.logchat = false;
+exports.logchat = true;
 
 // logchallenges - whether to log challenge battles. Useful for tournament servers.
 exports.logchallenges = false;
@@ -294,6 +294,7 @@ exports.grouplist = [
 		modchatall: true,
 		makeroom: true,
 		editroom: true,
+		addhtml: true,
 		potd: true,
 		disableladder: true,
                 globalonly: true,
@@ -395,13 +396,6 @@ exports.grouplist = [
 		warn: true,
 		kick: true,
 		mute: true,
-		joinbattle: true
-	},
-	{
-		symbol: '>',
-		id: "meme",
-		name: "Esteemed Meme",
-		inherit: '+',
 		joinbattle: true
 	},
 	{

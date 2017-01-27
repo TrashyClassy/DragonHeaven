@@ -99,8 +99,19 @@ if (typeof demFeels.extendEmotes === 'function') {
 		'Sanic':'http://i.imgur.com/Y6etmna.png',
 		'feelstab':'http://www.sherv.net/cm/emoticons/fighting/stabbing.gif',
 		'feelshigh':'http://i.imgur.com/s9I2bxp.jpg?1',
+		'feelsdyna':'http://i.imgur.com/pqkCFZx.png',
+		'feelskaneki':'http://i.imgur.com/h97QxFN.png',
 		'llamaconfuse':'http://orig01.deviantart.net/7863/f/2013/347/1/6/llama_emoji_38__confused___v2__by_jerikuto-d6uwuuu.gif',
 		'xoxo':'http://i.imgur.com/Yyw9ICj.png',
+		'feelsxp': 'http://i.imgur.com/sTXEtjS.jpg',
+		'feelsfab': 'http://i.imgur.com/vCPgsQA.jpg',
+		'eeveelutions!':'http://2.media.dorkly.cvcdn.com/25/38/4d9df0e6985ab9e9218f3874ccf9649d.gif',
+		'feelsluke':'http://i.imgur.com/ZQbYp9l.gif',
+		'getinthebag':'https://68.media.tumblr.com/209d1a0a125da03b7afcbd53316374c2/tumblr_ohuza1t4MW1qeb3ulo1_500.gif',
+		'oshat':'http://www.geekinsider.com/wp-content/uploads/2013/10/tumblr_mvblw72CTf1sal1obo1_400.gif',
+		'wowwy':'https://media.giphy.com/media/RfprItHPpSCf6/giphy.gif',
+		'feelszard':'http://i.imgur.com/SSJoM7P.gif',
+		'<3':'http://cliparts.co/cliparts/Rkc/M7K/RkcM7KXTj.png',
 	});
 }
 

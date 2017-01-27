@@ -111,6 +111,11 @@ exports.BattleMovedex = {
 			},
 		},
 	},
+	detect: {
+		inherit: true,
+		desc: "The user is protected from attacks made by the opponent during this turn. This move has an X/255 chance of being successful, where X starts at 255 and halves, rounded down, each time this move is successfully used. X resets to 255 if this move fails or if the user's last move used is not Detect, Endure, or Protect. Fails if the user moves last this turn.",
+		priority: 2,
+	},
 	dig: {
 		inherit: true,
 		effect: {
@@ -183,6 +188,11 @@ exports.BattleMovedex = {
 				}
 			},
 		},
+	},
+	endure: {
+		inherit: true,
+		desc: "The user will survive attacks made by the opponent during this turn with at least 1 HP. This move has an X/255 chance of being successful, where X starts at 255 and halves, rounded down, each time this move is successfully used. X resets to 255 if this move fails or if the user's last move used is not Detect, Endure, or Protect. Fails if the user moves last this turn.",
+		priority: 2,
 	},
 	explosion: {
 		inherit: true,
@@ -436,6 +446,11 @@ exports.BattleMovedex = {
 	poisonpowder: {
 		inherit: true,
 		ignoreImmunity: false,
+	},
+	protect: {
+		inherit: true,
+		desc: "The user is protected from attacks made by the opponent during this turn. This move has an X/255 chance of being successful, where X starts at 255 and halves, rounded down, each time this move is successfully used. X resets to 255 if this move fails or if the user's last move used is not Detect, Endure, or Protect. Fails if the user moves last this turn.",
+		priority: 2,
 	},
 	psywave: {
 		inherit: true,

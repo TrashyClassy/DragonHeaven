@@ -1,6 +1,63 @@
 'use strict';
 
 exports.BattleAbilities = {
+	"ultratechnical": {
+		onBasePowerPriority: 8,
+		onBasePower: function (basePower, attacker, defender, move) {
+			if (basePower <= 90) {
+				this.debug('Technician boost');
+				return this.chainModify(1.5);
+			}
+		},
+		id: "ultratechnical",
+		name: "Ultra Technical",
+	},
+	"bigbulletgun": {
+		onStart: function (pokemon) {
+			this.boost({def:-2,spd:-2});
+			this.add('-ability', pokemon, 'Big Bullet Gun');
+		},
+		onModifyMovePriority: -2,
+		onModifyMove: function (move) {
+			if (move.id === "closecombat") {
+				move.category = "Special";
+			}
+		},
+		onBoost: function (boost) {
+			for (let i in boost) {
+				boost[i] *= -1;
+			}
+		},
+		id:'bigbulletgun',
+		name:'Big Bullet Gun',
+	},
+	"staticboost": {
+		onStart: function (pokemon) {
+			pokemon.addVolatile("levitate");
+			this.add('-ability', pokemon, 'Static Boost');
+			this.boost({atk:1, def:1, spa:1, spd:1, spe:1, accuracy:1, evasion:1});
+		},
+		id:'staticboost',
+		name:'Static Boost',
+	},
+	"aquify": {
+		onModifyMovePriority: -1,
+		onModifyMove: function (move, pokemon) {
+			if (move.type === 'Normal' && move.id !== 'naturalgift' && !move.isZ) {
+				move.type = 'Water';
+				if (move.category !== 'Status') pokemon.addVolatile('aquify');
+			}
+		},
+		effect: {
+			duration: 1,
+			onBasePowerPriority: 8,
+			onBasePower: function (basePower, pokemon, target, move) {
+				return this.chainModify([0x1333, 0x1000]);
+			},
+		},
+		id: "aquify",
+		name: "Aquify",
+	},
 	shellarmorclone: {
 		onCriticalHit: false,
 		onModifyMove: function (move) {
@@ -15,6 +72,22 @@ exports.BattleAbilities = {
 		name: "Shell Armor",
 		rating: 1,
 		num: 1075,
+	},
+	"phantomguard": {
+		shortDesc: "This Pokemon can only be damaged by supereffective moves and indirect damage.",
+		onStart: function (pokemon) {
+			this.boost({def:3});
+		},
+		onTryHit: function (target, source, move) {
+			if (target.runEffectiveness(move) = 1) {
+				this.add('-immune', target, '[msg]', '[from] ability: Phantom Guard');
+				return null;
+			}
+		},
+		id: "phantomguard",
+		name: "Phantom Guard",
+		rating: 5,
+		num: 25,
 	},
 	//%Elcrest
                 "waterchange": {
@@ -164,26 +237,6 @@ exports.BattleAbilities = {
 		id: "flameguard",
 		name: "Flame Guard",
 	},
-	discoverme: {
-		onTryHit: function (target, source, move) {
-			if (target !== source && (move.type === 'Water')) {
-				if (!this.heal(target.maxhp  / 20)) {
-					this.add('-immune', target, '[msg]', '[from] ability: discover me');
-				}
-				return null;
-			}
-		},
-                onSourceModifyDamage: function (damage, source, target, move) {
-			if (move.type== "Dragon") {
-				this.debug('discover me weaken');
-				return this.chainModify(0.5);
-			}
-		},
-		id: "discoverme",
-		name: "discover me",
-		rating: 3.5,
-		num: 10,
-	},
 	breakthrough: {
 		onModifyMovePriority: -5,
 		onModifyMove: function (move) {
@@ -302,9 +355,11 @@ exports.BattleAbilities = {
 				return false;
 			}
 			let randomType = possibleTypes[this.random(possibleTypes.length)];
-
-			if (!source.setType(randomType)) return false;
+			target.types = [].push(randomType);
 			this.add('-start', target, 'typechange', randomType);
+		},
+		onSwitchOut: function(pokemon) {
+			pokemon.types = pokemon.baseTemplate.types;
 		},
 		id: "theunderlord",
 		name: "The Underlord",
@@ -321,6 +376,7 @@ exports.BattleAbilities = {
 			}
 			let newMove = this.getMoveCopy(move.id);
 			newMove.hasBounced = true;
+			
 			this.useMove(newMove, target, source);
 			return null;
 		},

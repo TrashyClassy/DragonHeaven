@@ -29,6 +29,10 @@ describe('Rooms features', function () {
 		let room;
 		afterEach(function () {
 			if (room) room.expire();
+			Users.users.forEach(user => {
+				user.disconnectAll();
+				user.destroy();
+			});
 		});
 
 		it('should allow two users to join the battle', function () {
@@ -64,6 +68,7 @@ describe('Rooms features', function () {
 			const roomStaff = new User();
 			roomStaff.forceRename("Room auth", true);
 			const administrator = new User();
+			administrator.forceRename("Admin", true);
 			administrator.group = '~';
 			const options = {
 				rated: false,
@@ -82,11 +87,6 @@ describe('Rooms features', function () {
 			assert.strictEqual(room.getAuth(roomStaff), '%', 'after promotion attempt');
 			Chat.parse("/roomvoice Room auth", room, administrator, administrator.connections[0]);
 			assert.strictEqual(room.getAuth(roomStaff), '+', 'after being promoted by an administrator');
-
-			for (const user of [roomStaff, administrator]) {
-				user.disconnectAll();
-				user.destroy();
-			}
 		});
 	});
 });

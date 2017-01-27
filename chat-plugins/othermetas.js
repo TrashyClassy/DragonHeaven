@@ -86,7 +86,7 @@ if (process.send && module === process.mainModule) {
 let isMega = function(zom) {
         var k = "",
                 b = false;
-        zom = rebuild(zom);
+        zom = toId(zom);
         for (var i = 0; i < k.length; i++) {
 
                 if (k.charAt(i) == 'm' && k.charAt(i + 1) == 'e' && k.charAt(i + 2) == 'g' && k.charAt(i + 3) == 'a')
@@ -241,6 +241,7 @@ let natures = {
                 minus: 'atk'
         },
 };
+//let learnstor = Tools.dexes.istor.data.Learnsets, movestor = Tools.dexes.istor.data.Movedex, dexstor= Tools.dexes.istor.data.Pokedex;
 exports.commands= {
 	mixandmega: 'mnm',
         mnm: function(target, room, user) {
@@ -1128,11 +1129,64 @@ exports.commands= {
                 baseStats['avespd'] = Math.floor((pokemen[name].baseStats.spd + pokemen[name2].baseStats.spd) / 2);
                 baseStats['avespe'] = Math.floor((pokemen[name].baseStats.spe + pokemen[name2].baseStats.spe) / 2);
                 let type = pokemen[name].types[0];
-                if (pokemen[name].types[0] != pokemen[name2].types[0])
+		let ability = "";
+		let weight = (pokemen[name].weightkg + pokemen[name2].weightkg)/2;
+		for(let i in pokemen[name].abilities) {
+			ability+=pokemen[name].abilities[i]+"/";
+		}
+		ability = ability.substring(0,ability.length-1);
+		ability = ability+" + "+pokemen[name2].abilities['0'];
+                if(separated[2] && toId(separated[2]) === "shiny" && pokemen[name2].types[1])
+                        type = type + '/' + pokemen[name2].types[1];
+                else if (pokemen[name].types[0] != pokemen[name2].types[0])
                         type = type + '/' + pokemen[name2].types[0];
+                if(type.split("/")[0] === type.split("/")[1]) {
+                        type = type.split("/")[0];
+                }
                 let bst = baseStats['avehp'] + baseStats['aveatk'] + baseStats['avedef'] + baseStats['avespa'] + baseStats['avespd'] + baseStats['avespe'];
-                text = "Stats: " + baseStats['avehp'] + "/" + baseStats['aveatk'] + "/" + baseStats['avedef'] + "/" + baseStats['avespa'] + "/" + baseStats['avespd'] + "/" + baseStats['avespe'] + " <b>BST</b>:" + bst + " <b>Type:</b> " + type;
+                text = "<b>Stats</b>: " + baseStats['avehp'] + "/" + baseStats['aveatk'] + "/" + baseStats['avedef'] + "/" + baseStats['avespa'] + "/" + baseStats['avespd'] + "/" + baseStats['avespe'] + "<br /><b>BST</b>:" + bst + "<br /><b>Type:</b> " + type + "<br /><b>Abilities</b>: " +ability+ "<br /><b>Weight</b>: "+weight+" kg";
                 this.sendReplyBox(text);
         }
 },
+	/*di: 'distor',
+	dataistor: 'distor',
+	distor: function(target, room, user) {
+        	 if (!this.runBroadcast()) return;
+                 if(!target || toId(target) === '') return this.sendReply("/distor: Shows the data for a Pokemon, including ones from istor.");
+		let name = toId(target);
+		let pokemen=Tools.dexes.istor.data.Pokedex;
+		if (!pokemen[name])
+			return this.errorReply("Error: Pokemon not found");
+		let baseStats = pokemen[name].baseStats;
+		let types = pokemen[name].types;
+		let type = '<span class="col typecol">';
+		for(let i = 0; i<types.length;i++) {
+			type = type+ '<img src="https://play.pokemonshowdown.com/sprites/types/'+types[i]+'.png" alt="'+types[i]+'" height="14" width="32">';
+		}
+		type = type+"</span>";
+		let ability = "";
+		let weight = pokemen[name].weightkg;
+		for(let i in pokemen[name].abilities) {
+			ability+=pokemen[name].abilities[i]+"/";
+		}
+		ability = ability.substring(0,ability.length-1);
+		let bst = baseStats['hp'] + baseStats['atk'] + baseStats['def'] + baseStats['spa'] + baseStats['spd'] + baseStats['spe'];
+		let text = "<b>Stats</b>: " + baseStats['hp'] + "/" + baseStats['atk'] + "/" + baseStats['def'] + "/" + baseStats['spa'] + "/" + baseStats['spd'] + "/" + baseStats['spe'] + "<br /><b>BST</b>:" + bst + "<br /><b>Type:</b> " + type + "<br /><b>Abilities</b>: " +ability+ "<br /><b>Weight</b>: "+weight+" kg";
+		this.sendReplyBox(text);
+	},
+
+        learnistor: function(target, room, user) {
+                if (!this.runBroadcast()) return;
+                if(!target || toId(target) === '') return this.sendReply("/learnistor: Shows the whether a Pokemon can learn a move, including Pokemon and Moves from istor.");
+                let targets = target.split(','), mon = targets[0], move = targets[1];
+                if(!mon || !dexstor[toId(mon)]) return this.errorReply("Error: Pokemon not found");
+                if(!learnstor[toId(mon)]) return this.errorReply("Error: Learnset not found");
+                if(!move || !movestor[toId(move)]) return this.errorReply("Error: Move not found");
+                mon = dexstor[toId(mon)];
+                move = movestor[toId(move)];
+                if(learnstor[toId(mon.species)].learnset[toId(move.name)]) {
+                        return this.sendReplyBox("In Istor, "+mon.species+' <font color="green"><u><b>can<b><u></font> learn '+move.name);
+                }
+                return this.sendReplyBox("In Istor, "+mon.species+' <font color="red"><u><b>can\'t<b><u></font> learn '+move.name);
+        },*/
 };

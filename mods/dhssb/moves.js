@@ -1,6 +1,172 @@
 "use strict";
 
 exports.BattleMovedex = {
+	zransei: {
+		accuracy: 100,
+		basePower: 300,
+		category: "Special",
+		id: "zransei",
+		isViable: true,
+		name: "Z-Ransei",
+		pp: 10,
+		priority: 1,
+		flags: {authentic: 1},
+		onTryHit: function (target, pokemon) {
+			this.attrLastMove('[still]');
+			pokemon.formeChange('Rayquaza-Mega');
+			this.add('-formechange', pokemon, 'Rayquaza-Mega', '[msg]');
+			this.add('-anim', pokemon, "Dragon Pulse", target);
+		},
+		onAfterHit: function (target, pokemon) {
+			pokemon.formeChange('Rayquaza');
+			this.add('-formechange', pokemon, 'Rayquaza', '[msg]');
+		},
+		target: "allAdjacentFoes",
+		type: "Dragon",
+		isZ: "ransiumz",
+	},
+	"heroicbeatdown": {
+		accuracy: 100,
+		basePower: 120,
+		category: "Physical",
+		id: "heroicbeatdown",
+		isViable: true,
+		name: "Heroic Beatdown",
+		pp: 10,
+		priority: 0,
+		flags: {contact: 1, protect: 1, mirror: 1},
+		self: {
+			boosts: {
+				def: 1,
+				spd: 1,
+				atk: 1,
+				spe: 2,
+			},
+		},
+		onPrepareHit: function (target, source) {
+			this.attrLastMove('[still]');
+			this.add('-anim', source, "Close Combat", target);
+		},
+		secondary: false,
+		target: "normal",
+		type: "Fighting",
+		contestType: "Tough",
+	},
+	"mythicform": {
+		category: "Status",
+		id: "mythicform",
+		name: "Mythic Form",
+		pp: 20,
+		priority: 0,
+		effect: {
+			onStart: function (side) {
+				if (side.pokemon[0].hasType('Dragon')) return false;
+				side.pokemon[0].addType('Dragon');
+				this.add('-start', side.pokemon[0], 'typeadd', 'Dragon', '[from] move: Mythic Form');
+			},
+		},
+		onPrepareHit: function (target, source) {
+			this.attrLastMove('[still]');
+			this.add('-anim', source, "Recover", target);
+			this.add('-anim', source, "Wish", target);
+		},
+		secondary: false,
+		target: "self",
+		type: "Dragon",
+		contestType: "Clever",
+	},
+	"totalannhilation": {
+		accuracy: true,
+		basePower: 300,
+		category: "Physical",
+		desc: "The user recovers the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
+		shortDesc: "User recovers the damage dealt.",
+		id: "totalannhilation",
+		isViable: true,
+		name: "Total Annhilation",
+		pp: 1,
+		priority: 3,
+		ignoreEvasion: true,
+		ignoreDefensive: true,
+		flags: {heal: 1, authentic:1},
+		secondary: {
+			chance: 100,
+			self: {
+				boosts: {
+					def: -1,
+					spd: -1,
+					atk: -1,
+					spa: -1,
+				},
+			},
+		},
+		drain: [4, 4],
+		onPrepareHit: function (target, source, move) {
+			this.attrLastMove('[still]');
+			this.add('-anim', source, "V-Create", target);
+			this.add('-anim', source, "Extreme Speed", target);
+			this.add('-anim', source, "Gigavolt Havoc", target);
+			this.add('-anim', source, "Explosion", target);
+			this.add("c|~Spandan|YOU DONT MESS WITH ME IDIOT");
+		},
+		onAfterMove: function(target, source, move) {
+			this.add("c|~Spandan|Huh im exhausted.")
+		},
+		type: "Flying",
+		isZ: "salamencite",
+	},
+	"powerlick": {
+		accuracy: 100,
+		basePower: 110,
+		category: "Special",
+		id: "powerlick",
+		name: "Power Lick",
+		pp: 15,
+		priority: 0,
+		flags: {protect: 1, mirror: 1},
+		onHit: function (target, source) {
+			if (this.random(10) < 1) {
+				stat = ['par','slp']
+				source.trySetStatus(stat[this.random(2)], target);
+			}
+			if (this.random(10) < 3) {
+				stat = ['atk','def','spa','spd','spe','evasion','accuracy']
+				boostobj = {};
+				boostobj[stat[this.random(6)]] = 1;
+				this.boost(boostobj, source);
+			}
+		},
+		onPrepareHit: function (target, source) {
+			this.attrLastMove('[still]');
+			this.add('-anim', source, "Lick", target);
+		},
+		flags: {contact: 1, protect: 1, mirror: 1, heal: 1},
+		drain: [25, 200],
+		target: "normal",
+		type: "Ice",
+		contestType: "Beautiful",
+	},
+	"bonecrushingdeathroll" : {
+		name: "Bone Crushing Death Roll",
+		id: "bonecrushingdeathroll",
+		category: 'Physical',
+		basePower: 120,
+		boosts: {
+			def: 1,
+			spd: 1,
+			atk: 2,
+		},
+		onPrepareHit: function (target, source) {
+			this.attrLastMove('[still]');
+			this.add('-anim', source, "Breakneck Blitz", target);
+		},
+		pp: 10,
+		accuracy: 100,
+		type: 'Normal',
+		priority:0, 
+		flags: {contact: 1, protect: 1, mirror: 1},
+		target: 'normal',
+	},
 	"blizzard": {
 		num: 59,
 		accuracy: 70,
@@ -25,129 +191,26 @@ exports.BattleMovedex = {
 		type: "Ice",
 		contestType: "Beautiful",
 	},
-	"flirt": {
-		accuracy: 100,
-		basePower: 0,
-		category: "Status",
-		desc: "Causes the target to become infatuated, making it unable to attack 50% of the time. Fails if both the user and the target are the same gender, if either is genderless, or if the target is already infatuated. The effect ends when either the user or the target is no longer active. Pokemon with the Ability Oblivious or protected by the Ability Aroma Veil are immune.",
-		shortDesc: "A target of the opposite gender gets infatuated.",
-		id: "flirt",
-		name: "Flirt",
-		pp: 15,
-		priority: 0,
-		flags: {protect: 1, reflectable: 1, mirror: 1, authentic: 1},
-		volatileStatus: 'attract',
-		effect: {
-			noCopy: true, // doesn't get copied by Baton Pass
-			onStart: function (pokemon, source, effect) {
-				if (!this.runEvent('Attract', pokemon, source)) {
-					this.debug('Attract event failed');
-					return false;
-				}
-			},
-			onUpdate: function (pokemon) {
-				if (this.effectData.source && !this.effectData.source.isActive && pokemon.volatiles['attract']) {
-					this.debug('Removing Attract volatile on ' + pokemon);
-					pokemon.removeVolatile('attract');
-				}
-			},
-			onBeforeMovePriority: 2,
-			onBeforeMove: function (pokemon, target, move) {
-				this.add('-activate', pokemon, 'move: Attract', '[of] ' + this.effectData.source);
-				if (this.random(2) === 0) {
-					this.add('cant', pokemon, 'Attract');
-					return false;
-				}
-			},
-			onEnd: function (pokemon) {
-				this.add('-end', pokemon, 'Attract', '[silent]');
-			},
-		},
-		onPrepareHit: function (target, source) {
-			this.attrLastMove('[still]');
-			this.add('-anim', source, "Attract", target);
-		},
-		secondary: false,
-		target: "normal",
-		type: "Normal",
-		contestType: "Cute",
-	},
-	"forcedassistance": {
-		accuracy: true,
-		basePower: 0,
-		category: "Status",
-		id: "forcedassistance",
-		isViable: true,
-		name: "Forced Assistance",
-		pp: 15,
-		priority: 0,
-		flags: {snatch: 1},
-		sideCondition: 'tailwind',
-		effect: {
-			onStart: function (side) {
-				this.add('-sidestart', side, 'move: Forced Assistance');
-			},
-			onModifyAtk: function (spe, pokemon) {
-				return this.chainModify(1);
-			},
-			onModifySpa: function (spa, pokemon) {
-				return this.chainModify(1);
-			},
-			onResidualOrder: 21,
-			onResidualSubOrder: 4,
-			onEnd: function (side) {
-				this.add('-sideend', side, 'move: Forced Assistance');
-			},
-		},
-		secondary: false,
-		target: "allySide",
-		type: "Psychic",
-		contestType: "Cool",
-	},
-	"yandereblast": {
+	"hornleech": {
+		num: 532,
 		accuracy: 100,
 		basePower: 120,
-		category: "Special",
-		id: "yandereblast",
-		name: "Yandere Blast",
-		pp: 20,
-                recoil : [2, 5],
-		priority: 0,
-		flags: {protect: 1, mirror: 1},
-		secondary: {
-			chance: 30,
-			volatileStatus: 'confusion',
-		},
-		onPrepareHit: function (target, source) {
-			this.attrLastMove('[still]');
-			this.add('-anim', source, "Night Slash", target);
-		},
-		target: "normal",
-		type: "Water",
-		contestType: "Beautiful",
-	},
-	"bitchslap": {
-		accuracy: 100,
-		basePower: 70,
 		category: "Physical",
-		id: "bitchslap",
-		name: "Bitch Slap",
-		pp: 20,
-                recoil : [2, 5],
+		desc: "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
+		shortDesc: "User recovers 50% of the damage dealt.",
+		id: "hornleech",
+		isViable: true,
+		name: "Horn Leech",
+		pp: 10,
 		priority: 0,
-		flags: {protect: 1, mirror: 1},
-		secondary: {
-			chance: 20,
-			volatileStatus: 'flinch',
-		},
-		onPrepareHit: function (target, source) {
-			this.attrLastMove('[still]');
-			this.add('-anim', source, "Wake-Up Slap", target);
-		},
+		flags: {contact: 1, protect: 1, mirror: 1, heal: 1},
+		drain: [1, 1],
+		secondary: false,
 		target: "normal",
-		type: "Ice",
-		contestType: "Beautiful",
+		type: "Grass",
+		contestType: "Tough",
 	},
+
 	"partingshotspam": {
 		num: 575,
 		accuracy: 100,
@@ -174,7 +237,7 @@ exports.BattleMovedex = {
 "theloomeffect": {
 		num: 407,
 		accuracy: 100,
-		basePower: 100,
+		basePower: 110,
 		category: "Special",
 		id: "theloomeffect",
 		name: "The Loom Effect",
@@ -192,14 +255,14 @@ exports.BattleMovedex = {
 		},
 		onPrepareHit: function (target, source) {
 			this.attrLastMove('[still]');
-			this.add('-anim', source, "Bolt Strike", target);
+			this.add('-anim', source, "Core Enforcer", target);
 		},
 		target: "normal",
 		type: "Dragon",
 	},
 	chachadance: {
 		accuracy: 100,
-		basePower: 100,
+		basePower: 190,
 		category: "Physical",
 		id: "chachadance",
 		name: "Cha Cha Dance",
@@ -213,10 +276,10 @@ exports.BattleMovedex = {
 		},
 		self: {
 	        chance: 50,
-		boosts: {
-			spe: 1,
+			boosts: {
+				spe: 1,
+			},
 		},
-	},
 		onPrepareHit: function (target, source) {
 			this.attrLastMove('[still]');
                         if (source.name == 'Quiet Chimchar') this.add("c|@Quiet Chimchar|I like to Cha Cha");
@@ -225,7 +288,7 @@ exports.BattleMovedex = {
 		type: "Fire",
 		contestType: "Cool",
 	},
-        "rushb": {
+    "rushb": {
 		accuracy: 100,
 		basePower: 250,
 		category: "Special",
@@ -275,7 +338,7 @@ exports.BattleMovedex = {
 	//%Elcrest
 	"turbulence": {
 		accuracy: 100,
-		basePower: 60,
+		basePower: 110,
 		category: "Physical",
 		shortDesc: "Nearly always goes first.",
 		id: "turbulence",
@@ -284,40 +347,13 @@ exports.BattleMovedex = {
 		pp: 10,
 		onPrepareHit: function (target, source, move) {
 			this.attrLastMove('[still]');
-			this.add('-anim', source, "Brave Bird", target);
+			this.add('-anim', source, "Dragon Ascent", target);
 		},
 		priority: 2,
 		flags: {contact: 1, protect: 1, mirror: 1},
 		secondary: false,
 		target: "normal",
 		type: "Flying"
-	},
-	llamadance: {
-		accuracy: 100,
-		basePower: 200,
-		category: "Physical",
-		desc: "If this move is successful, the user must recharge on the following turn and cannot make a move.",
-		shortDesc: "User cannot move next turn.",
-		id: "llamadance",
-		name: "llamadance",
-		pp: 12,
-		priority: 0,
-		ohko: true,
-		flags: {recharge: 1, protect: 1, mirror: 1},
-		self: {
-			volatileStatus: 'mustrecharge',
-		},
-		onHit: function (target, source) {
-			if (source.name == 'iAlain') this.add("c|~iAlain|Let's llamadance");
-		},
-		onPrepareHit: function (target, source) {
-			this.attrLastMove('[still]');
-			this.add('-anim', source, "earthquake", target);
-		},
-		secondary: false,
-		target: "normal",
-		type: "Dragon",
-		contestType: "Cool",
 	},
 	spacecompress: {
 		accuracy: 100,
@@ -336,8 +372,7 @@ exports.BattleMovedex = {
 		self: {
 				boosts: {
 					spa: 1,
-					spd: 1,
-					evasion: 1,
+					spd: 2,
 				},
 			},
 		boosts: {
@@ -353,10 +388,10 @@ exports.BattleMovedex = {
 		accuracy:100,
 		pp:15,
 		id: "ggm8",
-		name: "ggm8",
+		name: "gg m8",
 		isNonstandard: true,
 		isViable: true,
-		basePower:150,
+		basePower:170,
 		category:"Physical",
 		type:"Dragon",
 		target:"normal",
@@ -374,7 +409,9 @@ exports.BattleMovedex = {
 		},
 		onPrepareHit: function (target, source) {
 			this.attrLastMove('[still]');
+			this.add('-anim', source, "Tail Glow", source);
 			this.add('-anim', source, "V-Create", target);
+			this.add("c|&charizard8888|gg m8");
 		},
 	},
 	sacredhax: {
@@ -400,28 +437,28 @@ exports.BattleMovedex = {
 		},
 	},
 	hyperspeedpunch: {
-	accuracy: 100,
-	basePower: 45,
-	category: "Physical",
-	id: "hyperspeedpunch",
-	isViable: true,
-	isNonstandard: true,
-	name: "Hyperspeed Punch",
-	pp: 10,
-	priority: 2,
-	flags: {protect: 1, mirror: 1},
-	onPrepareHit: function (target, source) {
-		this.attrLastMove('[still]');
-		this.add('-anim', source, "Mach Punch", target);
+		accuracy: 100,
+		basePower: 45,
+		category: "Physical",
+		id: "hyperspeedpunch",
+		isViable: true,
+		isNonstandard: true,
+		name: "Hyperspeed Punch",
+		pp: 10,
+		priority: 2,
+		flags: {protect: 1, mirror: 1},
+		onPrepareHit: function (target, source) {
+			this.attrLastMove('[still]');
+			this.add('-anim', source, "Mach Punch", target);
+		},
+		secondary: {
+			chance: 20,
+			volatileStatus: 'flinch',
+		},
+		target: "normal",
+		type: "Bug",
 	},
-	secondary: {
-		chance: 20,
-		volatileStatus: 'flinch',
-	},
-	target: "normal",
-	type: "Bug",
-	},
-        garchompepicness: {
+    garchompepicness: {
 		accuracy: 100,
 		category: "Status",
 		id: "garchompepicness",
@@ -434,8 +471,8 @@ exports.BattleMovedex = {
 		secondary: {
 			self: {
 				boosts: {
-					atk: 1,
-					def: 2,
+					atk: 3,
+					def: 3,
 					spe: 3,
 				},
 			},
@@ -455,7 +492,7 @@ exports.BattleMovedex = {
 	},
 	"blehflame": {
 		accuracy: 100,
-		basePower: 100,
+		basePower: 120,
 		category: "Special",
 		desc: "Has a 10% chance to raise the user's Attack, Defense, Special Attack, Special Defense, and Speed by 1 stage.",
 		shortDesc: "10% chance to raise all stats by 1 (not acc/eva).",
@@ -466,7 +503,7 @@ exports.BattleMovedex = {
 		priority: 0,
 		onPrepareHit: function (target, source) {
 			this.attrLastMove('[still]');
-			this.add('-anim', source, "Blue Flare", target);
+			this.add('-anim', source, "Inferno Overdrive", target);
 		},
 		flags: {protect: 1, mirror: 1},
 		secondary: {
@@ -492,7 +529,7 @@ exports.BattleMovedex = {
 		name: "Haxing Rage",
 		isNonstandard: true,
 		isViable: true,
-		basePower:110,
+		basePower:120,
 		category:"Physical",
 		type:"Dragon",
 		target:"normal",
@@ -514,7 +551,7 @@ exports.BattleMovedex = {
 	},
 	"waitandhope": {
 		accuracy: 100,
-		basePower: 130,
+		basePower: 140,
 		category: "Special",
 		id: "waitandhope",
 		name: "Wait and hope",
@@ -559,26 +596,27 @@ exports.BattleMovedex = {
 			status: 'par',
 		},
 		target: "any",
-		type: "Flying",
+		type: "Dragon",
 	},
 	"yomammajoke": {
 		accuracy: 100,
-		basePower: 150,
+		basePower: 180,
 		category: "Physical",
 		desc: "The user recovers 3/4 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
 		shortDesc: "User recovers 75% of the damage dealt.",
 		id: "yomammajoke",
 		isViable: true,
-		name: "Yo MaMMa Joke",
+		name: "Yo Mamma Joke",
 		pp: 10,
 		priority: 1,
-		flags: {protect: 1, mirror: 1, distance: 1, heal: 1},
+		flags: {protect: 1, mirror: 1, distance: 1, heal: 1, sound:1},
 		drain: [3, 4],
 		secondary: false,
 		target: "any",
 		onPrepareHit: function (target, source, move) {
 			this.attrLastMove('[still]');
 			this.add('-anim', source, "Taunt", target);
+			this.add('-anim', source, "Boomburst", target);
 			this.add('-anim', source, "Extreme Speed", target);
 			this.add("c|~Spandan|"+["Yo mama so stupid she got locked in a grocery store and starved!", "Yo mama so fat that the Richie Rich had to pay for her lipo-suction operation.","Yo mama so fat it took her four weeks to die from lethal injection.","Yo mama so fat she sat on an iPhone and turned it into an iPad","Yo mama so fat when she stepped on the scale, the doctor said \"Holy Crap, That's My Phone Number\"","Yo mama so fat she uses Google Earth to take a selfie.","Yo mama so stupid when the computer said \"Press any key to continue\", she couldn't find the \"Any\" key.","Yo mama so bald, I could polish her head and take her bowling.","Yo mama is so ugly, Bob the builder said: 'i can't fix that.'","Yo mama so ugleh, the Illuminati closed its eye.","Yo mama so ugleh, Hello Kitty said goodbye.","Yo mama so ugly, One direction went the other direction."][this.random(12)]);
 		},
@@ -651,11 +689,12 @@ exports.BattleMovedex = {
 		self: {
 			boosts: {
 				def: 1,
+				spd: 1,
 			},
 		},
 		onPrepareHit: function (target, source) {
 			this.attrLastMove('[still]');
-			this.add('-anim', source, "Nasty Plot", target);
+			this.add('-anim', source, "Black Hole Eclipse", target);
 		},
 		flags: {protect: 1, mirror: 1},
 		secondary: false,
@@ -751,7 +790,7 @@ exports.BattleMovedex = {
 		contestType: "Tough",
 	},
 	dragonsymphony: {
-		accuracy: 90,
+		accuracy: 100,
 		basePower: 120,
 		category: "Physical",
 		id: "dragonsymphony",
@@ -764,7 +803,7 @@ exports.BattleMovedex = {
 		flags: {mirror: 1, protect: 1},
 		onPrepareHit: function (target, source) {
 			this.attrLastMove('[still]');
-			this.add('-anim', source, "Crabhammer", target);
+			this.add('-anim', source, "Sunsteel Strike", target);
 		},
 		onHit: function (target, source) {
 			if (toId(source.name) === 'eternalmayhem') {
@@ -776,13 +815,13 @@ exports.BattleMovedex = {
 			status: 'sleep',
 		},
 		self: {
-	        chance: 40,
+	        chance: 60,
 		boosts: {
-                        atk: 1,
-			spe: 1,
+                        atk: 2,
+			spe: 2,
 		},
 	},
-		recoil: [1, 2],
+		recoil: [1, 5],
 		target: "normal",
 		type: "Dragon",
 	},

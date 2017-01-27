@@ -4,38 +4,34 @@
   **************/
 
   body {
-    background: #EEE url("http://i.imgur.com/kBU4mQc.png") no-repeat left fixed;
+    background: #EEE url("http://cdn.wallpapersafari.com/8/90/dkvK4w.jpg") no-repeat left fixed;
+    width: 100%;
+    max-width: 1500px;
   }
 
-.button{color:black;background:#ff9966!important;border:solid 1px black!important}.menugroup
+.button{color:black;background:#f4aa42!important;border:solid 1px black!important}.menugroup
 
 .button:hover,.menugroup
 
-.button:active{color:white;background:#ff9966!important;border:solid 1px black!important
+.button:active{color:black;background:#f4aa42!important;border:solid 1px black!important
 }
-
-
 
   .astext{
     border: none;
     background: none;
-    padding:0;
-    height: -20em;
-    font-family:Verdana,sans-serif;
-    font-size: 12px;
-    cursor: pointer;
   }
 
   .broadcast-blue {
-    background-image: url(http://www.bar82.com/wp-content/uploads/2014/09/Halloween-Banner.jpg);
-    border: 6px solid #FFA500;
-    color: #01272d;
-    font-family: Jokerman;
-    font-size: 2em;
-    padding: 35px;
+    background-image: url(https://s3.amazonaws.com/videoblocks-content/video/thumbnail/0xPgM5l/fiery-frame-black-background_xke6hmq8__M0000.jpg);
+    border: 5px solid #FFA000;
+    font-size:24px;
+    color: #846907;
+    font-weight:bold;
+    font-family: sans-serif;
+    padding: 50px;
     text-align: center;
     margin: 5px;
-    text-shadow: 2px 0px 0px #00FF7F;
+    text-shadow: 0px -1px 0px #e6e6e6;
   }
 
   .broadcast-blue a {
@@ -72,13 +68,96 @@
     color: #19610B;
   }
 
+}
+
+.rainbow {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  border: none;
+  font: Jokerman;
+	font-size:60px;
+  color: rgba(0, 0, 0, 0);
+  text-align: center;
+  -o-text-overflow: clip;
+  text-overflow: clip;
+  text-shadow: 3px 0 0 , 6px 0 0 black , 9px 0 0 rgb(245,221,8) , 12px 0 0 rgb(5,148,68) , 15px 0 0 rgb(2,135,206) , 18px 0 0  , 21px 0 0  ;
+  -webkit-transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -moz-transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -o-transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.rainbow:hover {
+  text-shadow: -3px 0 0 rgb(217,31,38) , -6px 0 0 rgb(226,91,14) , -9px 0 0 rgb(245,221,8) , -12px 0 0 rgb(5,148,68) , -15px 0 0 rgb(2,135,206) , -18px 0 0 rgb(4,77,145) , -21px 0 0 rgb(42,21,113) ;
+  -webkit-transition: all 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -moz-transition: all 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -o-transition: all 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: all 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.flash {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  padding: 20px;
+	cursor:pointer;
+  border: none;
+  font-family: Jokerman;
+font-size:64px;
+  color: rgba(255,255,255,1);
+  text-align: center;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 10px #f4aa42 , 0 0 20px #f4aa42 , 0 0 30px #f4aa42 , 0 0 40px #f4aa42 , 0 0 70px #f4aa42 , 0 0 80px #f4aa42 , 0 0 100px #f4aa42 , 0 0 150px #f4aa42 ;
+  -webkit-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+  -moz-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+  -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+  transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1) 10ms;
+}
+
+.flash:hover {
+  text-shadow: 0 0 5px #d35656 , 0 0 10px #d35656 , 0 0 15px #d35656 , 0 0 20px #d35656 , 0 0 35px #d35656 , 0 0 40px #d35656 , 0 0 50px #d35656 , 0 0 75px #d35656 ;
+}
+.boom{
+  text-align:center;
+  font-size:6.5em;
+  color:#fff;
+  letter-spacing: -7px;
+  font-weight:700;
+  text-transform:uppercase;
+  animation:blur .75s ease-out infinite;
+  text-shadow:0px 0px 5px #fff,
+      0px 0px 7px #fff;
+}
+
+@keyframes blur{
+  from{
+      text-shadow:0px 0px 10px #fff,
+      0px 0px 10px #FFA000, 
+      0px 0px 25px #FFA000,
+      0px 0px 25px #FFA000,
+      0px 0px 25px #FFA000,
+      0px 0px 25px #FFA000,
+      0px 0px 25px #FFA000,
+      0px 0px 25px #FFA000,
+      0px 0px 50px #FFA000,
+      0px 0px 50px #FFA000,
+      0px 0px 50px #7B96B8,
+      0px 0px 150px #7B96B8,
+      0px 10px 100px #7B96B8,
+      0px 10px 100px #7B96B8,
+      0px 10px 100px #7B96B8,
+      0px 10px 100px #7B96B8,
+      0px -10px 100px #7B96B8,
+      0px -10px 100px #7B96B8;}
+}
   .textbox, .textbox:hover, .textbox:focus {
     border: 1px solid #252F3F;
     box-shadow: none !important;
   }
-  .message-announce {
-	  background-color:#088e4b;
-	  color:yellow;
+
   }
   .closebutton, .minimizebutton {
     color: #413B45;
@@ -112,6 +191,13 @@
     color: orange;
     background: white;
   }
+.dark a.roomtab.button.closable {
+	color:black;
+}
+.dark a.roomtab.button.cur {
+	color:black;
+}
+
 
 
 
@@ -126,6 +212,31 @@
     color: #000000;
     border: 1px solid #ffa500;
   }
+  button {
+    background:#ffa500;
+    border-radius: 5px;
+    color: #000000;
+    border: 1px solid #ffa500;
+  }
+
+button.button.mainmenu1{
+	color:#373b3d;
+}
+button.button.mainmenu2{
+	color:black;
+}
+button.button.mainmenu3{
+	color:black;
+}
+button.button.mainmenu4{
+	color:black;
+}
+button.button.mainmenu5{
+	color:black;
+}
+.dark button.button {
+	color:black;
+}
 
   .infobox {
     border: 1px solid #0B1361;
@@ -197,21 +308,25 @@
 }
 
   .maintabbarbottom {
-    background: #ff9966;
+    background: #f4aa42;
+    border: 1px solid #808080;
+  }
+.dark .maintabbarbottom {
+    background: #f4aa42;
     border: 1px solid #808080;
   }
 
   .tabbar a.button.notifying {
     background: #00E2DB;
     border-color: #00FFFF;
-    color: #00FFFF;
+    color: #FFA000;
     text-shadow: none;
   }
 
   .tabbar a.button.notifying:hover {
     background: #00DAD2;
     border-color: #00FFFF;
-    color: #00FFFF;
+    color: black;
   }
 
   .tabbar a.button.cur, .tabbar a.button.cur:hover {
@@ -358,7 +473,7 @@
 /*Battle CSS*/
 
   .backdrop {
-    background: url(https://img-fotki.yandex.ru/get/16110/7416871.1e/0_7fdd6_17c4d552_XL.jpg) !important;
+    background: url(http://cdn.wallpapersafari.com/31/60/sFZiGV.jpg) !important;
         opacity: 0.6;
 }
 
@@ -403,6 +518,11 @@
   .trainer div {
     opacity: 1;
   }
+
+img.pixelated {
+	background:url(http://www.pokestadium.com/sprites/xy/zygarde.gif);
+	background-repeat:no-repeat;
+}
 
   .turnstatus-protect {
     background:url(http://i.imgur.com/RVxCoHz.png);
@@ -529,17 +649,20 @@
     border-color: #000000;
 }
 .pmnote {
-	color:#FFA000;
+	color:#36688D;
+	font-weight:bold
 	
 }
 .message-pm {
-	color:#FFA000;
+	color:#36688D;
+	font-weight:bold;
 
 }
 
 .userlist li button:hover {
         background:rgba(244, 244, 244, 0.5)
   }
+
 
 /*************************************
   * Userlist Icons *
